@@ -1,6 +1,0 @@
-struct class Move {
-  int x;
-  int y;
-  bool fill;
-  bool cross;
-}
