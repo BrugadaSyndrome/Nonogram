@@ -1,4 +1,4 @@
-package Nonogram
+package main
 
 import (
 	"fmt"
@@ -9,9 +9,6 @@ import (
 	"runtime"
 )
 
-// const
-// Width: determines the width of the puzzle
-// Height: determines the height of the puzzle
 const (
 	debugNone     = 0
 	debugNormal   = 1
@@ -21,9 +18,6 @@ const (
 	markEmpty   = 0
 	markFilled  = 1
 	markCrossed = 2
-
-	Width  = 5
-	Height = 10
 )
 
 // var
@@ -36,8 +30,8 @@ var (
 	masterAddress = fmt.Sprintf("%s:%s", getLocalAddress(), port)
 )
 
-func startNonogramMaster(ng *Nonogram, address string) {
-	rpc.Register(ng)
+func startNonogramMaster(m *Master, address string) {
+	rpc.Register(m)
 	rpc.HandleHTTP()
 
 	l, e := net.Listen("tcp", address)
@@ -51,6 +45,27 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	puzzle := new(Nonogram)
-	startNonogramMaster(puzzle, masterAddress)
+	puzzle.Width = 5
+	puzzle.Height = 5
+
+	puzzle.Board = make([][]int, puzzle.Height)
+	for i := range puzzle.Board {
+		puzzle.Board[i] = make([]int, puzzle.Width)
+	}
+
+	master := new(Master)
+	master.Nonogram = puzzle
+
+	/*
+		for i := 0; i < puzzle.Height; i++ {
+			for j := 0; j < puzzle.Width; j++ {
+				fmt.Print(puzzle.Board[i][j])
+			}
+			fmt.Print("\n")
+		}
+	*/
+	fmt.Print(puzzle)
+
+	startNonogramMaster(master, masterAddress)
 
 }

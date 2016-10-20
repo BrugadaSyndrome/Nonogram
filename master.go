@@ -1,14 +1,14 @@
-package Nonogram
+package main
 
 import "fmt"
 
 // FillCell is called to fill cell with the value markFilled if cell value is markEmpty
-func (ng *Nonogram) FillCell(cell Position, reply *bool) error {
-	ng.Mutex.Lock()
-	defer ng.Mutex.Unlock()
+func (m *Master) FillCell(cell Position, reply *bool) error {
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
 
-	if ng.Board[cell.X][cell.Y] == markEmpty {
-		ng.Board[cell.X][cell.Y] = markFilled
+	if m.Nonogram.Board[cell.X][cell.Y] == markEmpty {
+		m.Nonogram.Board[cell.X][cell.Y] = markFilled
 		debugMessage(debugNormal, fmt.Sprintf("Filled (%d,%d)", cell.X, cell.Y))
 		*reply = true
 	} else {
@@ -20,12 +20,12 @@ func (ng *Nonogram) FillCell(cell Position, reply *bool) error {
 }
 
 // CrossCell is called to fill cell with the value markCrossed if cell value is markEmpty
-func (ng *Nonogram) CrossCell(cell Position, reply *bool) error {
-	ng.Mutex.Lock()
-	defer ng.Mutex.Unlock()
+func (m *Master) CrossCell(cell Position, reply *bool) error {
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
 
-	if ng.Board[cell.X][cell.Y] == markEmpty {
-		ng.Board[cell.X][cell.Y] = markCrossed
+	if m.Nonogram.Board[cell.X][cell.Y] == markEmpty {
+		m.Nonogram.Board[cell.X][cell.Y] = markCrossed
 		debugMessage(debugNormal, fmt.Sprintf("Crossed (%d,%d)", cell.X, cell.Y))
 		*reply = true
 	} else {
@@ -44,14 +44,19 @@ width height
 ...
 1 3 //width x height times
 */
-func (ng *Nonogram) loadPuzzle(file string, reply *bool) error {
+func (m *Master) loadPuzzle(file string, reply *Nothing) error {
 
-	*reply = false
 	return nil
 }
 
-func (ng *Nonogram) savePuzzle(file string, reply *bool) error {
+func (m *Master) savePuzzle(file string, reply *Nothing) error {
 
-	*reply = false
 	return nil
 }
+
+/*
+func (ng *Nonogram) String(junk Nothing, reply *string) error {
+	*reply = fmt.Sprintf("Width: %d\nHeight: %d\n", ng.Width, ng.Height)
+	return nil
+}
+*/

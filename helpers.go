@@ -1,4 +1,4 @@
-package Nonogram
+package main
 
 import (
 	"fmt"
