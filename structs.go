@@ -27,11 +27,14 @@ func (ng Nonogram) String() string {
 }
 
 type Master struct {
+	Address  string
+	Workers  []string
 	Nonogram *Nonogram
 	Mutex    sync.Mutex
 }
 
 type Worker struct {
+	Address  string
 	Nonogram *Nonogram
 	Mutex    sync.Mutex
 }

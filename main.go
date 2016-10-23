@@ -25,16 +25,16 @@ const (
 // Port: port for the server to run on
 // MasterAddress: address for the server to run on
 var (
-	DebugLevel    = debugVerbose
-	port          = "8080"
-	masterAddress = fmt.Sprintf("%s:%s", getLocalAddress(), port)
+	DebugLevel     = debugVerbose
+	CurrentPort    = 8080
+	MachineAddress = getLocalAddress()
 )
 
-func startNonogramMaster(m *Master, address string) {
+func startNonogramMaster(m *Master) {
 	rpc.Register(m)
 	rpc.HandleHTTP()
 
-	l, e := net.Listen("tcp", address)
+	l, e := net.Listen("tcp", m.Address)
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
@@ -44,17 +44,12 @@ func startNonogramMaster(m *Master, address string) {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	puzzle := new(Nonogram)
-	puzzle.Width = 5
-	puzzle.Height = 5
-
-	puzzle.Board = make([][]int, puzzle.Height)
-	for i := range puzzle.Board {
-		puzzle.Board[i] = make([]int, puzzle.Width)
-	}
-
 	master := new(Master)
-	master.Nonogram = puzzle
+	startNonogramMaster(master)
+
+	var reply bool
+	master.SetAddress(fmt.Sprintf("%s:%d", MachineAddress, CurrentPort), &reply)
+	master.LoadPuzzle("nonogram1.txt", &reply)
 
 	/*
 		for i := 0; i < puzzle.Height; i++ {
@@ -64,8 +59,5 @@ func main() {
 			fmt.Print("\n")
 		}
 	*/
-	fmt.Print(puzzle)
-
-	startNonogramMaster(master, masterAddress)
 
 }
