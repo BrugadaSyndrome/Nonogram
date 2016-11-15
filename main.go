@@ -20,44 +20,42 @@ const (
 	markCrossed = 2
 )
 
-// var
-// DebugLevel: determines the amount of debug text in the console
-// Port: port for the server to run on
-// MasterAddress: address for the server to run on
 var (
 	DebugLevel     = debugVerbose
 	CurrentPort    = 8080
 	MachineAddress = getLocalAddress()
 )
 
-func startNonogramMaster(m *Master) {
-	rpc.Register(m)
+func startNonogramMaster(master *Master, masterAddress string, puzzlePath string) {
+	// start rpc server
+	rpc.Register(master)
 	rpc.HandleHTTP()
 
-	l, e := net.Listen("tcp", m.Address)
+	l, e := net.Listen("tcp", masterAddress)
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
 	go http.Serve(l, nil)
+
+	// load board
+	var reply bool
+	err := call(masterAddress, "Master.LoadPuzzle", puzzlePath, &reply)
+	if err != nil {
+		debugMessage(debugNone, "Something went wrong with RPC call")
+	}
+	if reply == false {
+		debugMessage(debugNormal, "Something went wrong when loading board")
+	} else {
+		debugMessage(debugNormal, "Puzzle is ready to be solved")
+	}
 }
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	master := new(Master)
-	startNonogramMaster(master)
+	masterAddress := fmt.Sprintf("%s:%d", MachineAddress, CurrentPort)
+	puzzlePath := "nonogram1.txt"
 
-	var reply bool
-	master.SetAddress(fmt.Sprintf("%s:%d", MachineAddress, CurrentPort), &reply)
-	master.LoadPuzzle("nonogram1.txt", &reply)
-
-	/*
-		for i := 0; i < puzzle.Height; i++ {
-			for j := 0; j < puzzle.Width; j++ {
-				fmt.Print(puzzle.Board[i][j])
-			}
-			fmt.Print("\n")
-		}
-	*/
-
+	startNonogramMaster(master, masterAddress, puzzlePath)
 }

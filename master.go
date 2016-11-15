@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // FillCell is called to fill cell with the value markFilled if cell value is markEmpty
@@ -40,41 +42,62 @@ func (m *Master) CrossCell(cell Position, reply *bool) error {
 	return nil
 }
 
-// TODO: make file format for puzzles
 /*
-width height
-1
-1 2
-...
-1 3 //width x height times
+	Width Height
+	Column Hints x Width
+	Row Hints x Height
 */
 func (m *Master) LoadPuzzle(file string, reply *bool) error {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 
-	puzzle := new(Nonogram)
-	puzzle.Width = 5
-	puzzle.Height = 5
-	puzzle.Board = make([][]int, puzzle.Height)
-	for i := range puzzle.Board {
-		puzzle.Board[i] = make([]int, puzzle.Width)
-	}
-
 	fin, err := os.Open(file)
 
-	if err != nil {
+	if fin != nil {
 		scanner := bufio.NewScanner(fin)
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-			fmt.Println(scanner.Bytes())
+
+		// read in width and height first
+		scanner.Scan()
+		widthThenHeight := strings.Fields(scanner.Text())
+
+		// make puzzle instance
+		puzzle := new(Nonogram)
+		puzzle.Width, _ = strconv.Atoi(widthThenHeight[0])
+		puzzle.Height, _ = strconv.Atoi(widthThenHeight[1])
+		puzzle.Board = make([][]int, puzzle.Height)
+		for i := range puzzle.Board {
+			puzzle.Board[i] = make([]int, puzzle.Width)
 		}
+		puzzle.ColumnHints = make([][]int, puzzle.Width)
+		puzzle.RowHints = make([][]int, puzzle.Height)
+
+		// read in rest of the puzzle
+		//lines := make([]string, puzzle.Width+puzzle.Height)
+		i := 0
+		for scanner.Scan() {
+			hints := strings.Fields(scanner.Text())
+			intHints := make([]int, len(hints))
+			for j := 0; j < len(hints); j++ {
+				intHints[j], _ = strconv.Atoi(hints[j])
+			}
+
+			if i < puzzle.Width {
+				puzzle.ColumnHints[i] = intHints
+			} else {
+				puzzle.RowHints[i%puzzle.Height] = intHints
+			}
+			//fmt.Println(hints, intHints)
+			i++
+		}
+
+		debugMessage(debugVerbose, "\n"+puzzle.String())
 
 		debugMessage(debugNone, fmt.Sprintf("[Master] Puzzle loaded: %s", file))
 		fin.Close()
 		*reply = true
 	} else {
 		debugMessage(debugNormal, fmt.Sprintf("[Master] Puzzle not loaded: %s", file))
-		fmt.Println(err)
+		debugMessage(debugNormal, fmt.Sprintf("[Master] Error %v", err))
 		*reply = false
 	}
 	return nil
@@ -86,16 +109,5 @@ func (m *Master) SavePuzzle(file string, reply *bool) error {
 
 	*reply = false
 
-	return nil
-}
-
-func (m *Master) SetAddress(address string, reply *bool) error {
-	m.Mutex.Lock()
-	defer m.Mutex.Unlock()
-
-	m.Address = address
-	*reply = true
-
-	debugMessage(debugNormal, fmt.Sprintf("[Master] Address set: %s", address))
 	return nil
 }
