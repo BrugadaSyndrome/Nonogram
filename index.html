@@ -2,10 +2,29 @@
 <html>
     <head>
         <title>{{.Title}}</title>
+        <link rel="stylesheet" href="index.css">
     </head>
 
     <body>
-        {{.Content}}
+        
+        <div id="master">
+            {{.Master}}
+        </div>
+
+        <div id="log">
+            <ol>
+            {{range .Log}}
+                <li>{{.}}</li>
+            {{end}}
+            </ol>
+        </div>
+
+        <div id="workers">
+            {{range $worker := .Workers}}
+                <div>Worker {{$worker.ID}}</div>
+            {{end}}
+        </div>
+        
     </body>
 
 </html>
