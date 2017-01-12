@@ -1,5 +1,11 @@
 package main
 
+import (
+	"html/template"
+	"io/ioutil"
+	"os"
+)
+
 // Mark is an enum for what is put into a cell on a board
 type mark int
 
@@ -8,6 +14,16 @@ const (
 	filled
 	crossed
 )
+
+// Move represents where a mark is placed
+// Mark is the type of mark
+// X is the column position of the mark
+// Y is the row position of the mark
+type move struct {
+	Mark mark
+	X    int
+	Y    int
+}
 
 // Nonogram represents the state of a nonogram puzzle
 // Board stores the marks made on the cells of the puzzle
@@ -19,4 +35,19 @@ type nonogram struct {
 	Height int
 	Hints  [][]int
 	Width  int
+}
+
+// represent the puzzle as HTML for the web API
+func (n *nonogram) HTML() string {
+	fin, err := ioutil.ReadFile("static/templates/nonogram.html")
+	checkError(err, "Failed to read nonogram.html.")
+
+	templateString := string(fin)
+	nonogramTemplate, err := template.New("nonogram").Parse(templateString)
+	checkError(err, "Failed to parse nonogramTemplate.")
+
+	err = nonogramTemplate.ExecuteTemplate(os.Stdout, "nonogram", n)
+	checkError(err, "Failed to execute nonogramTemplate.")
+
+	return ""
 }

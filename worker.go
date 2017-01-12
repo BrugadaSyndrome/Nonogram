@@ -7,7 +7,7 @@ package main
 // Puzzle workers working replica of masters puzzle
 type worker struct {
 	ID     int
-	Inbox  chan<- mark
-	Outbox <-chan mark
+	Inbox  chan<- move
+	Outbox <-chan move
 	Puzzle nonogram
 }

@@ -5,7 +5,7 @@ package main
 // Outboxes is a list of channels that workers will listen on to receive updates from the master
 // Puzzle master instance of puzzle
 type master struct {
-	Inbox    <-chan mark
-	Outboxes []chan<- mark
+	Inbox    <-chan move
+	Outboxes []chan<- move
 	Puzzle   nonogram
 }
