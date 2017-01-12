@@ -8,7 +8,14 @@ import (
 )
 
 func main() {
+	// set up a file server for static files
+	fileServer := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
+	// handle URLs
 	http.HandleFunc("/", index)
+
+	// run server
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
 
@@ -17,35 +24,34 @@ type indexData struct {
 	Title   string
 	Master  string
 	Log     []string
-	Workers []Worker
+	Workers []worker
 }
 
 func index(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
-	fin, err := ioutil.ReadFile("index.html")
-	check(err, "Failed to read index.html.")
+	fin, err := ioutil.ReadFile("static/index.html")
+	checkError(err, "Failed to read index.html.")
 
 	templateString := string(fin)
 	indexTemplate, err := template.New("index").Parse(templateString)
-	check(err, "Failed to parse templateString.")
+	checkError(err, "Failed to parse templateString.")
 
 	data := indexData{
 		Title:   "Nonogram Solver",
 		Master:  "Master Board will be here",
-		Log:     []string{"log 1", "log 2"},
-		Workers: []Worker{Worker{1}, Worker{2}},
+		Log:     []string{},
+		Workers: []worker{worker{1}, worker{2}},
 	}
 	err = indexTemplate.Execute(w, data)
-	check(err, "Failed to execute indexTemplate.")
+	checkError(err, "Failed to execute indexTemplate.")
 }
 
-// MISC //
-type Worker struct {
+type worker struct {
 	ID int
 }
 
-func check(err error, errMessage string) {
+func checkError(err error, errMessage string) {
 	if err != nil {
 		log.Fatal(errMessage)
 	}
