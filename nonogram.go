@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"os"
@@ -37,10 +38,9 @@ type nonogram struct {
 	Width  int
 }
 
-// represent the puzzle as HTML for the web API
-func (n *nonogram) HTML() string {
-	fin, err := ioutil.ReadFile("static/templates/nonogram.html")
-	checkError(err, "Failed to read nonogram.html.")
+func (n *nonogram) ExecuteTemplate() {
+	fin, err := ioutil.ReadFile("static/templates/nonogram.tmpl")
+	checkError(err, "Failed to read nonogram.tmpl.")
 
 	templateString := string(fin)
 	nonogramTemplate, err := template.New("nonogram").Parse(templateString)
@@ -48,6 +48,5 @@ func (n *nonogram) HTML() string {
 
 	err = nonogramTemplate.ExecuteTemplate(os.Stdout, "nonogram", n)
 	checkError(err, "Failed to execute nonogramTemplate.")
-
-	return ""
+	fmt.Println()
 }

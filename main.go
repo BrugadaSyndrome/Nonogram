@@ -19,6 +19,6 @@ func main() {
 
 func checkError(err error, errMessage string) {
 	if err != nil {
-		log.Fatal(errMessage)
+		log.Fatalf("\n[err] %v\n[msg] %s", err, errMessage)
 	}
 }

@@ -25,6 +25,7 @@
         <div id="workers">
             {{range $worker := .Workers}}
                 <div class="worker">Worker {{$worker.ID}}</div>
+                {{template "nonogram"}}
             {{end}}
         </div>
         
