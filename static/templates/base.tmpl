@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{.Title}}</title>
+        <link rel="stylesheet" type="text/css" href="static/index.css">
+    </head>
+
+    <body>
+        
+        <div id="master">
+            {{template "master"}}<br>
+            Number of Workers: <input type="number" min=0 max=9><br>
+            <button id="solve">Solve</button>
+        </div>
+
+        <div id="log">
+            {{template "log" .}}
+        </div>
+
+        <div id="workers">
+            {{template "worker"}}
+        </div>
+        
+    </body>
+
+</html>
