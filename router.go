@@ -36,7 +36,7 @@ func index(w http.ResponseWriter, req *http.Request) {
 	w2.Puzzle = n
 
 	context := indexData{
-		Log:     []string{"msg 1", "msg 2", "msg 3"},
+		Log:     []string{"msg 1", "msg 2", "msg 3", "msg 4", "msg 5", "msg 6", "msg 7", "msg 8", "msg 9", "msg 10"},
 		Master:  m,
 		Title:   "Nonogram Solver",
 		Workers: []worker{w1, w2},

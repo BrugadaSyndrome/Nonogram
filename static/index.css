@@ -3,23 +3,53 @@ body {
     margin: 0px;
 }
 
-th, td {
-    border: 1px solid black;
+h3 {
+    text-decoration: underline;
+    -webkit-margin-before: 0px;
 }
 
 th, td {
+    border: 1px solid black;
     height: 1.5em;
     width: 1.5em;
 }
 
-#master {
-    border: 1px solid red;
-}
-
 #log {
     border: 1px solid blue;
+    float: right;
+    height: 200px;
+    margin: 10px;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: 10px;
+    position: relative;
+    width: 25%;
+}
+
+#master {
+    border: 1px solid red;
+    float: left;
+    height: 200px;
+    margin: 10px;
+    padding: 10px;
+    width: 65%;
+}
+
+#workers {
+    clear: left;
+}
+
+.filled {
+    background-color: black;
 }
 
 .worker {
     border: 1px solid green;
+    float: left;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    padding: 10px;
+    width: 24%;
 }
+
+
