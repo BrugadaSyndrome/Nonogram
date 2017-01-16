@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{.Title}}</title>
+        <link rel="stylesheet" type="text/css" href="static/index.css">
+    </head>
+
+    <body>
+        
+        <div id="master">
+            {{.Master}}<br>
+            Number of Workers: <input type="number" min=0 max=9><br>
+            <button>Solve</button>
+        </div>
+
+        <div id="log">
+            Log
+            <ol>
+            {{range .Log}}
+                <li>{{.}}</li>
+            {{end}}
+            </ol>
+        </div>
+
+        <div id="workers">
+            {{range $worker := .Workers}}
+                <div class="worker">Worker {{$worker.ID}}</div>
+                {{template "nonogram"}}
+            {{end}}
+        </div>
+        
+    </body>
+
+</html>

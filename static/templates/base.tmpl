@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{.Title}}</title>
+        <link rel="stylesheet" type="text/css" href="static/index.css">
+    </head>
+
+    <body>
+        <div id="master">
+            {{template "master" .Master}}
+        </div>
+
+        <div id="log">
+            {{template "log" .Log}}
+        </div>
+
+        <div id="workers">
+            {{range .Workers}}
+                {{template "worker" .}}
+            {{end}}
+        </div>
+    </body>
+
+</html>
