@@ -3,6 +3,15 @@ body {
     margin: 0px;
 }
 
+th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    height: 1.5em;
+    width: 1.5em;
+}
+
 #master {
     border: 1px solid red;
 }

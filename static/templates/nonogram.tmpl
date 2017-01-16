@@ -1,6 +1,15 @@
 {{define "nonogram"}}
-<div>
-    Height: {{.Height}}
-    Width: {{.Width}}
-</div>
+    <p>
+        Height: {{.Height}}
+        Width: {{.Width}}
+    </p>
+    <table class="nonogram">
+        {{range .Board}}
+            <tr>
+                {{range .}}
+                    <td>&nbsp;</td>
+                {{end}}
+            </tr>
+        {{end}}
+    </table>
 {{end}}

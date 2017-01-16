@@ -1,3 +1,6 @@
 {{define "worker"}}
-    Worker template
+<div class="worker" id="worker_{{.ID}}">
+    <h3>Worker {{.ID}}</h3>
+    {{template "nonogram" .Puzzle}}
+</div>
 {{end}}

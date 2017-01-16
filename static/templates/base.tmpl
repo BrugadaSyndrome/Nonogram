@@ -6,21 +6,19 @@
     </head>
 
     <body>
-        
         <div id="master">
-            {{template "master"}}<br>
-            Number of Workers: <input type="number" min=0 max=9><br>
-            <button id="solve">Solve</button>
+            {{template "master" .Master}}
         </div>
 
         <div id="log">
-            {{template "log" .}}
+            {{template "log" .Log}}
         </div>
 
         <div id="workers">
-            {{template "worker"}}
+            {{range .Workers}}
+                {{template "worker" .}}
+            {{end}}
         </div>
-        
     </body>
 
 </html>
