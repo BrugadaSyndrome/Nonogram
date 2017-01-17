@@ -1,9 +1,16 @@
 {{define "nonogram"}}
     <table class="nonogram">
+        {{/* Display column hints */}}
+
+        {{/* Display board */}}
         {{range .Board}}
             <tr>
+                {{/* Display hints for THIS row */}}
+                {{range $row := index $.RowHints 0}}
+                    {{$row}}
+                {{end}}
                 {{range .}}
-                    <td>&nbsp;</td>
+                    <td class="empty">&nbsp;</td>
                 {{end}}
             </tr>
         {{end}}
