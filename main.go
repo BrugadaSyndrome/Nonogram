@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 )
 
@@ -25,7 +26,13 @@ func init() {
 		}
 	}
 
-	templates, err = template.ParseFiles(allFiles...)
+	functions := template.FuncMap{
+		"ascending":  ascending,
+		"descending": descending,
+		"longestRow": longestRow,
+	}
+
+	templates, err = template.New(filepath.Base(allFiles[0])).Funcs(functions).ParseFiles(allFiles...)
 	checkError(err, "Unable to parse all templates.")
 }
 

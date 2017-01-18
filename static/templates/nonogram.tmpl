@@ -1,17 +1,28 @@
 {{define "nonogram"}}
     <table class="nonogram">
-        {{/* Display column hints */}}
-
         {{/* Display board */}}
-        {{range .Board}}
+        {{range $i := ascending 0 $.Height}}
             <tr>
-                {{/* Display hints for THIS row */}}
-                {{range $row := index $.RowHints 0}}
-                    {{$row}}
+
+            {{/*Display row hints*/}}
+            {{$max := longestRow $.RowHints}}
+            {{range $y := descending 0 $max}}
+                {{if ge $y (len (index $.RowHints $i))}}
+                    <th></th>
+                {{else}}
+                    <th>{{index $.RowHints $i $y}}</th>
                 {{end}}
-                {{range .}}
+            {{end}}
+
+            {{range $j := ascending 0 $.Width}}
+                {{if eq (index $.Board $i $j) 0}}
                     <td class="empty">&nbsp;</td>
+                {{else if eq (index $.Board $i $j) 1}}
+                    <td class="filled">&nbsp;</td>
+                {{else if eq (index $.Board $i $j) 2}}
+                    <td class="crossed">&nbsp;</td>
                 {{end}}
+            {{end}}
             </tr>
         {{end}}
     </table>
