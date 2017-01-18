@@ -30,6 +30,7 @@ func init() {
 		"ascending":  ascending,
 		"descending": descending,
 		"longestRow": longestRow,
+		"subtract":   subtract,
 	}
 
 	templates, err = template.New(filepath.Base(allFiles[0])).Funcs(functions).ParseFiles(allFiles...)

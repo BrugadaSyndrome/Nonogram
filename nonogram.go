@@ -57,11 +57,11 @@ func sampleNonogram() (n nonogram) {
 	*/
 	n.Height = 5
 	n.RowHints = make([][]int, height)
-	n.RowHints[0] = []int{1, 1}
-	n.RowHints[1] = []int{2, 2}
-	n.RowHints[2] = []int{5}
+	n.RowHints[0] = []int{1, 3}
+	n.RowHints[1] = []int{1, 1}
+	n.RowHints[2] = []int{3}
 	n.RowHints[3] = []int{2, 2}
-	n.RowHints[4] = []int{1, 1}
+	n.RowHints[4] = []int{1, 1, 1}
 	/*
 		n.RowHints = make([][]int, height)
 		for i := 0; i < height; i++ {

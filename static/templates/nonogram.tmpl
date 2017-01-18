@@ -1,19 +1,21 @@
 {{define "nonogram"}}
     <table class="nonogram">
-        {{/* Display board */}}
+        
         {{range $i := ascending 0 $.Height}}
             <tr>
 
             {{/*Display row hints*/}}
-            {{$max := longestRow $.RowHints}}
-            {{range $y := descending 0 $max}}
-                {{if ge $y (len (index $.RowHints $i))}}
+            {{$longestRow := longestRow $.RowHints}}
+            {{$rowLength := len (index $.RowHints $i)}}
+            {{range $y := ascending (subtract $rowLength $longestRow) $rowLength }}
+                {{if lt $y 0 }}
                     <th></th>
                 {{else}}
                     <th>{{index $.RowHints $i $y}}</th>
                 {{end}}
             {{end}}
 
+            {{/* Display board row */}}
             {{range $j := ascending 0 $.Width}}
                 {{if eq (index $.Board $i $j) 0}}
                     <td class="empty">&nbsp;</td>

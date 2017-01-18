@@ -14,7 +14,7 @@ func ascending(start, end int) (stream chan int) {
 func descending(start, end int) (stream chan int) {
 	stream = make(chan int)
 	go func() {
-		for i := end - 1; i >= 0; i-- {
+		for i := start - 1; i >= end; i-- {
 			stream <- i
 		}
 		close(stream)
@@ -28,5 +28,10 @@ func longestRow(matrix [][]int) (max int) {
 			max = len(matrix[i])
 		}
 	}
+	return
+}
+
+func subtract(a, b int) (dif int) {
+	dif = a - b
 	return
 }
