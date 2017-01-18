@@ -1,21 +1,43 @@
 {{define "nonogram"}}
+    {{$longestColumn := longestList $.ColumnHints}}
+    {{$longestRow := longestList $.RowHints}}
+
     <table class="nonogram">
+        {{/* Column Hints */}}
+
+        {{range $i := descending $longestColumn 0}}
+            <tr>
+                {{/* Pad headers from offset of row hints */}}
+                {{range $j := ascending 0 $longestRow}}
+                    <th></th>
+                {{end}}
+
+                
+                {{range $j := ascending 0 $.Width}}
+                    {{$columnLength := len (index $.ColumnHints $j)}}
+                    {{if ge $i $columnLength}}
+                        <th></th>
+                    {{else}}
+                        <th>{{index $.ColumnHints $j $i}}</th>   
+                    {{end}}
+                {{end}}
+            </tr>
+        {{end}}
         
         {{range $i := ascending 0 $.Height}}
             <tr>
 
-            {{/*Display row hints*/}}
-            {{$longestRow := longestRow $.RowHints}}
+            {{/* Row hints */}}
             {{$rowLength := len (index $.RowHints $i)}}
-            {{range $y := ascending (subtract $rowLength $longestRow) $rowLength }}
-                {{if lt $y 0 }}
+            {{range $j := ascending (subtract $rowLength $longestRow) $rowLength }}
+                {{if lt $j 0 }}
                     <th></th>
                 {{else}}
-                    <th>{{index $.RowHints $i $y}}</th>
+                    <th>{{index $.RowHints $i $j}}</th>
                 {{end}}
             {{end}}
 
-            {{/* Display board row */}}
+            {{/* Board row */}}
             {{range $j := ascending 0 $.Width}}
                 {{if eq (index $.Board $i $j) 0}}
                     <td class="empty">&nbsp;</td>

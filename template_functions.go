@@ -22,7 +22,7 @@ func descending(start, end int) (stream chan int) {
 	return
 }
 
-func longestRow(matrix [][]int) (max int) {
+func longestList(matrix [][]int) (max int) {
 	for i := 0; i < len(matrix); i++ {
 		if len(matrix[i]) > max {
 			max = len(matrix[i])

@@ -27,10 +27,10 @@ func init() {
 	}
 
 	functions := template.FuncMap{
-		"ascending":  ascending,
-		"descending": descending,
-		"longestRow": longestRow,
-		"subtract":   subtract,
+		"ascending":   ascending,
+		"descending":  descending,
+		"longestList": longestList,
+		"subtract":    subtract,
 	}
 
 	templates, err = template.New(filepath.Base(allFiles[0])).Funcs(functions).ParseFiles(allFiles...)

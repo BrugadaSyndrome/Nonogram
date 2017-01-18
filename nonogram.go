@@ -42,10 +42,10 @@ func sampleNonogram() (n nonogram) {
 	}
 	//fmt.Println(n.Board)
 	n.ColumnHints = make([][]int, width)
-	n.ColumnHints[0] = []int{5}
+	n.ColumnHints[0] = []int{1, 2}
 	n.ColumnHints[1] = []int{1, 1}
-	n.ColumnHints[2] = []int{1}
-	n.ColumnHints[3] = []int{1, 1}
+	n.ColumnHints[2] = []int{1, 1, 1}
+	n.ColumnHints[3] = []int{1, 2}
 	n.ColumnHints[4] = []int{5}
 	//fmt.Println(n.ColumnHints)
 	/*
