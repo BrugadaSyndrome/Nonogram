@@ -16,13 +16,7 @@ type logData struct {
 func index(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
-	n := nonogram{}
-	n.Height = 5
-	n.Width = 5
-	n.Board = make([][]mark, n.Height)
-	for i := 0; i < n.Height; i++ {
-		n.Board[i] = make([]mark, n.Width)
-	}
+	n := sampleNonogram()
 
 	m := master{}
 	m.Puzzle = n

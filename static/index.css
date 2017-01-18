@@ -8,8 +8,13 @@ h3 {
     -webkit-margin-before: 0px;
 }
 
-th, td {
+td {
     border: 1px solid black;
+    height: 1.5em;
+    width: 1.5em;
+}
+
+th {
     height: 1.5em;
     width: 1.5em;
 }
@@ -29,7 +34,6 @@ th, td {
 #master {
     border: 1px solid red;
     float: left;
-    height: 200px;
     margin: 10px;
     padding: 10px;
     width: 65%;
@@ -39,8 +43,20 @@ th, td {
     clear: left;
 }
 
+.crossed {
+    background-color: red;
+}
+
+.empty {
+    background-color: white;
+}
+
 .filled {
     background-color: black;
+}
+
+.hidden {
+    display: none;
 }
 
 .worker {
