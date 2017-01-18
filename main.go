@@ -27,6 +27,7 @@ func init() {
 	}
 
 	functions := template.FuncMap{
+		"add":         add,
 		"ascending":   ascending,
 		"descending":  descending,
 		"longestList": longestList,

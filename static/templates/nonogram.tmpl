@@ -5,20 +5,20 @@
     <table class="nonogram">
         {{/* Column Hints */}}
 
-        {{range $i := descending $longestColumn 0}}
+        {{range $i := ascending (subtract 0 $longestColumn) 0}}
             <tr>
                 {{/* Pad headers from offset of row hints */}}
                 {{range $j := ascending 0 $longestRow}}
                     <th></th>
                 {{end}}
 
-                
                 {{range $j := ascending 0 $.Width}}
-                    {{$columnLength := len (index $.ColumnHints $j)}}
-                    {{if ge $i $columnLength}}
+                    {{$columnHeight := len (index $.ColumnHints $j)}}
+                    {{$offsetI := add $i $columnHeight}}
+                    {{if lt $offsetI 0}}
                         <th></th>
                     {{else}}
-                        <th>{{index $.ColumnHints $j $i}}</th>   
+                        <th>{{index $.ColumnHints $j $offsetI}}</th>
                     {{end}}
                 {{end}}
             </tr>
@@ -26,27 +26,26 @@
         
         {{range $i := ascending 0 $.Height}}
             <tr>
-
-            {{/* Row hints */}}
-            {{$rowLength := len (index $.RowHints $i)}}
-            {{range $j := ascending (subtract $rowLength $longestRow) $rowLength }}
-                {{if lt $j 0 }}
-                    <th></th>
-                {{else}}
-                    <th>{{index $.RowHints $i $j}}</th>
+                {{/* Row hints */}}
+                {{$rowLength := len (index $.RowHints $i)}}
+                {{range $j := ascending (subtract $rowLength $longestRow) $rowLength }}
+                    {{if lt $j 0 }}
+                        <th></th>
+                    {{else}}
+                        <th>{{index $.RowHints $i $j}}</th>
+                    {{end}}
                 {{end}}
-            {{end}}
 
-            {{/* Board row */}}
-            {{range $j := ascending 0 $.Width}}
-                {{if eq (index $.Board $i $j) 0}}
-                    <td class="empty">&nbsp;</td>
-                {{else if eq (index $.Board $i $j) 1}}
-                    <td class="filled">&nbsp;</td>
-                {{else if eq (index $.Board $i $j) 2}}
-                    <td class="crossed">&nbsp;</td>
+                {{/* Board row */}}
+                {{range $j := ascending 0 $.Width}}
+                    {{if eq (index $.Board $i $j) 0}}
+                        <td class="empty">&nbsp;</td>
+                    {{else if eq (index $.Board $i $j) 1}}
+                        <td class="filled">&nbsp;</td>
+                    {{else if eq (index $.Board $i $j) 2}}
+                        <td class="crossed">&nbsp;</td>
+                    {{end}}
                 {{end}}
-            {{end}}
             </tr>
         {{end}}
     </table>

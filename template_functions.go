@@ -1,5 +1,10 @@
 package main
 
+func add(a, b int) (sum int) {
+	sum = a + b
+	return
+}
+
 func ascending(start, end int) (stream chan int) {
 	stream = make(chan int)
 	go func() {
