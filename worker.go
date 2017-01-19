@@ -11,3 +11,11 @@ type worker struct {
 	Outbox <-chan move
 	Puzzle nonogram
 }
+
+func newWorker(n nonogram, id int, masterInbox <-chan move) (w worker) {
+	w.ID = id
+	w.Inbox = make(chan<- move)
+	w.Outbox = masterInbox
+	w.Puzzle = n
+	return
+}
