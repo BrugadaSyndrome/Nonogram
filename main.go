@@ -45,6 +45,7 @@ func main() {
 
 	// handle URLs
 	http.HandleFunc("/", index)
+	http.HandleFunc("/log", updateLog)
 
 	// run server
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))

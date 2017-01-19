@@ -46,7 +46,7 @@ func loadNonogramFromJSON(path string) (n nonogram) {
 	checkError(err, "Could not unmarshal JSON file.")
 
 	/* [FEATURE]
-	 * Curent*
+	 * Current*
 		- Board is set as blank even if a board matrix is defined in the JSON file
 	 * Future*
 		- If the JSON object has a board matrix defined, set the board up as it specified
