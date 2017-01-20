@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 // Worker
 // ID of worker
 // Inbox is the channel that the master will send updates to
@@ -10,6 +14,13 @@ type worker struct {
 	Inbox  chan<- move
 	Outbox <-chan move
 	Puzzle nonogram
+}
+
+func (w worker) Work() {
+	fmt.Printf("Worker %d is working.", w.ID)
+	for {
+
+	}
 }
 
 func newWorker(n nonogram, id int, masterInbox <-chan move) (w worker) {
