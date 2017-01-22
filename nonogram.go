@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -14,14 +15,30 @@ const (
 	crossed
 )
 
+func (m mark) String() string {
+	txt := "empty"
+	switch m {
+	case 1:
+		txt = "fill"
+	case 2:
+		txt = "cross"
+	}
+	return fmt.Sprintf("%s", txt)
+}
+
 // Move represents where a mark is placed
 // Mark is the type of mark
 // X is the column position of the mark
 // Y is the row position of the mark
 type move struct {
+	From int
 	Mark mark
 	X    int
 	Y    int
+}
+
+func (m move) String() string {
+	return fmt.Sprintf("%s cell (%d,%d)", m.Mark, m.X, m.Y)
 }
 
 // Nonogram represents the state of a nonogram puzzle
@@ -46,9 +63,9 @@ func loadNonogramFromJSON(path string) (n nonogram) {
 	checkError(err, "Could not unmarshal JSON file.")
 
 	/* [FEATURE]
-	 * Current*
+	 * Current *
 		- Board is set as blank even if a board matrix is defined in the JSON file
-	 * Future*
+	 * Future *
 		- If the JSON object has a board matrix defined, set the board up as it specified
 		- Else set the board as blank
 	*/
