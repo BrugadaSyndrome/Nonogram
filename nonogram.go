@@ -16,12 +16,16 @@ const (
 )
 
 func (m mark) String() string {
-	txt := "empty"
+	var txt string
 	switch m {
+	case 0:
+		txt = "empty"
 	case 1:
 		txt = "fill"
 	case 2:
 		txt = "cross"
+	default:
+		txt = "Undefined!"
 	}
 	return fmt.Sprintf("%s", txt)
 }
@@ -55,21 +59,13 @@ type nonogram struct {
 	Width       int      `json: "width"`
 }
 
-func loadNonogramFromJSON(path string) (n nonogram) {
+func loadNonogram(path string) (n nonogram) {
 	file, err := ioutil.ReadFile(path)
 	checkError(err, "Unable to load nonogram from JSON file.")
 
 	err = json.Unmarshal(file, &n)
 	checkError(err, "Could not unmarshal JSON file.")
 
-	/* [FEATURE]
-	 * Current *
-		- Board is set as blank even if a board matrix is defined in the JSON file
-	 * Future *
-		- If the JSON object has a board matrix defined, set the board up as it specified
-		- Else set the board as blank
-	*/
-	// Allocate board instance
 	n.Board = make([][]mark, n.Height)
 	for i := 0; i < n.Height; i++ {
 		n.Board[i] = make([]mark, n.Width)

@@ -10,10 +10,6 @@
             {{template "master" .Master}}
         </div>
 
-        <div id="log">
-            {{template "log" .Log}}
-        </div>
-
         <div id="workers">
             {{range .Workers}}
                 {{template "worker" .}}

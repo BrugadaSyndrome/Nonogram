@@ -10,17 +10,17 @@ type indexData struct {
 }
 
 func index(w http.ResponseWriter, req *http.Request) {
-	if req.Method == "GET" {
+	if req.URL.Path == "/" && req.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
 
-		n := loadNonogramFromJSON("./static/puzzles/puzzle1.json")
-		master, workers := newMaster(n, 2)
+		n := loadNonogram("./static/puzzles/puzzle2.json")
+		master := newMaster(n, 3)
 
 		context := indexData{
 			Log:     []string{},
 			Master:  master,
 			Title:   "Nonogram Solver",
-			Workers: workers,
+			Workers: master.Workers,
 		}
 
 		err := templates.Execute(w, context)
