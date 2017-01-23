@@ -14,7 +14,7 @@ func index(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusOK)
 
 		n := loadNonogram("./static/puzzles/puzzle2.json")
-		master := newMaster(n, 3)
+		master := newMaster(n, 1)
 
 		context := indexData{
 			Log:     []string{},

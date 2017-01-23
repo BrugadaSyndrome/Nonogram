@@ -23,37 +23,60 @@ func (w worker) Work() {
 	fmt.Printf("[Worker %d] starting work.\n", w.ID)
 
 	job := <-w.Jobs
-	fmt.Printf("[Worker %d] got job: %d\n", w.ID, job)
 
 	switch job {
 	case boxes:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		w.Boxes()
 	case spaces:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case forcing:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case glue:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case joining:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case splitting:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case punctuating:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case mercury:
-		fmt.Printf("[Worker %d] method is: %s\n", w.ID, job)
+		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	default:
-		log.Fatalf("Worker got unknown job: %d", job)
+		log.Fatalf("Worker got unknown job: int(%d) string(%s)", job, job)
 	}
 
-	mv := move{w.ID, filled, w.ID, w.ID}
-	w.Outbox <- mv
-	fmt.Printf("[Worker %d] sent move: %s\n", w.ID, mv)
-
 	w.Jobs <- job
-	fmt.Printf("[Worker %d] returned job: %d\n", w.ID, job)
+	fmt.Printf("[Worker %d] done working. Returning job: %s.\n", w.ID, job)
+}
 
-	fmt.Printf("[Worker %d] done working.\n", w.ID)
+func (w worker) Boxes() {
+	/*
+		- What if the board already has filled cells?
+	*/
+	fmt.Printf("[Worker %d] is running Boxes\n", w.ID)
+
+	for rowIndex, row := range w.Puzzle.RowHints {
+		L := make([]mark, w.Puzzle.Width)
+		i := 0
+		for _, hint := range row {
+			for z := i; z < i+hint; z++ {
+				L[z] = filled
+			}
+			i += hint
+			L[i] = crossed
+			i++
+		}
+		//fmt.Printf("[Worker %d] L: %v\n", w.ID, L)
+
+		for i, j := 0, len(L)-1; i < len(L) && j >= 0; i, j = i+1, j-1 {
+			if L[i] == L[j] && L[i] == filled && L[j] == filled {
+				w.Outbox <- move{w.ID, filled, rowIndex, i}
+			}
+		}
+	}
+
+	fmt.Printf("[Worker %d] is done running Boxes\n", w.ID)
 }
 
 func newWorker(n nonogram, id int, masterInbox chan move) (w worker) {

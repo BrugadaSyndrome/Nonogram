@@ -66,9 +66,20 @@ func (m master) Manage() {
 }
 
 func (m master) processInbox() {
-	for v := range m.Inbox {
-		fmt.Printf("[Master] Recieved move: %s\n", v)
+	for mv := range m.Inbox {
+		fmt.Printf("[Master] Recieved move from Worker %d: %s\n", mv.From, mv)
+		err := m.makeMark(mv)
+		checkError(err, "Master could apply move.")
 	}
+}
+
+func (m master) makeMark(mv move) error {
+	/*
+		- how to check for errors...
+		- update html with mark
+	*/
+	m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
+	return nil
 }
 
 func newMaster(n nonogram, numWorkers int) (m master) {

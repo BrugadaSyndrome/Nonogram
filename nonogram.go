@@ -42,7 +42,7 @@ type move struct {
 }
 
 func (m move) String() string {
-	return fmt.Sprintf("%s cell (%d,%d)", m.Mark, m.X, m.Y)
+	return fmt.Sprintf("%s (%d,%d)", m.Mark, m.X, m.Y)
 }
 
 // Nonogram represents the state of a nonogram puzzle
