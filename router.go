@@ -3,36 +3,29 @@ package main
 import "net/http"
 
 type indexData struct {
-	Log     []string
 	Master  master
+	Seconds int
 	Title   string
-	Workers []worker
 }
 
-func index(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/" && req.Method == "GET" {
+func handleIndex(w http.ResponseWriter, req *http.Request) {
+	if req.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
 
 		n := loadNonogram("./static/puzzles/puzzle2.json")
-		master := newMaster(n, 1)
+		serverMaster := newMaster(n, 2)
 
 		context := indexData{
-			Log:     []string{},
-			Master:  master,
+			Master:  serverMaster,
+			Seconds: 3,
 			Title:   "Nonogram Solver",
-			Workers: master.Workers,
 		}
 
 		err := templates.Execute(w, context)
 		checkError(err, "Failed to execute templates.")
 
-		master.Manage()
-
+		serverMaster.Manage()
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
-}
-
-type logData struct {
-	Log []string
 }

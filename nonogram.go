@@ -72,32 +72,3 @@ func loadNonogram(path string) (n nonogram) {
 	}
 	return
 }
-
-func sampleNonogram() (n nonogram) {
-	height := 5
-	width := 5
-
-	n.Board = make([][]mark, height)
-	for i := 0; i < height; i++ {
-		n.Board[i] = make([]mark, width)
-	}
-
-	n.ColumnHints = make([][]int, width)
-	n.ColumnHints[0] = []int{1, 2}
-	n.ColumnHints[1] = []int{1, 1}
-	n.ColumnHints[2] = []int{1, 1, 1}
-	n.ColumnHints[3] = []int{1, 2}
-	n.ColumnHints[4] = []int{5}
-
-	n.Height = 5
-
-	n.RowHints = make([][]int, height)
-	n.RowHints[0] = []int{1, 3}
-	n.RowHints[1] = []int{1, 1}
-	n.RowHints[2] = []int{3}
-	n.RowHints[3] = []int{2, 2}
-	n.RowHints[4] = []int{1, 1, 1}
-
-	n.Width = 5
-	return
-}

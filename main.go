@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	templates *template.Template
+	templates    *template.Template
+	serverMaster master
 )
 
 func init() {
@@ -44,7 +45,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	// handle URLs
-	http.HandleFunc("/", index)
+	http.HandleFunc("/", handleIndex)
 
 	// run server
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))

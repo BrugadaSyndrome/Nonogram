@@ -67,18 +67,19 @@ func (m master) Manage() {
 
 func (m master) processInbox() {
 	for mv := range m.Inbox {
+
 		fmt.Printf("[Master] Recieved move from Worker %d: %s\n", mv.From, mv)
 		err := m.makeMark(mv)
-		checkError(err, "Master could apply move.")
+		checkError(err, "Master could not apply move.")
 	}
 }
 
 func (m master) makeMark(mv move) error {
 	/*
-		- how to check for errors...
-		- update html with mark
+		- check for errors...
 	*/
 	m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
+
 	return nil
 }
 

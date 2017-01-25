@@ -4,7 +4,6 @@
 
     <table class="nonogram">
         {{/* Column Hints */}}
-
         {{range $i := ascending (subtract 0 $longestColumn) 0}}
             <tr>
                 {{/* Pad headers from offset of row hints */}}
@@ -39,11 +38,11 @@
                 {{/* Board row */}}
                 {{range $j := ascending 0 $.Width}}
                     {{if eq (index $.Board $i $j) 0}}
-                        <td class="empty">&nbsp;</td>
+                        <td id="cell_{{$i}}_{{$j}}" class="empty">&nbsp;</td>
                     {{else if eq (index $.Board $i $j) 1}}
-                        <td class="filled">&nbsp;</td>
-                    {{else if eq (index $.Board $i $j) 2}}
-                        <td class="crossed">&nbsp;</td>
+                        <td id="cell_{{$i}}_{{$j}}" class="filled">&nbsp;</td>
+                    {{else if eq (index $.Board $i $j) 2}} 
+                        <td id="cell_{{$i}}_{{$j}}" class="crossed">&nbsp;</td>
                     {{end}}
                 {{end}}
             </tr>

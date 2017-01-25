@@ -1,8 +1,8 @@
-<!DOCTYPE html>
 <html>
     <head>
         <title>{{.Title}}</title>
         <link rel="stylesheet" type="text/css" href="static/index.css">
+        {{/* <meta http-equiv="refresh" content="{{.Seconds}}" /> */}}
     </head>
 
     <body>
@@ -11,10 +11,9 @@
         </div>
 
         <div id="workers">
-            {{range .Workers}}
+            {{range .Master.Workers}}
                 {{template "worker" .}}
             {{end}}
         </div>
     </body>
-
 </html>
