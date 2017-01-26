@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+)
 
 // Method is an enum for methods of solving a nonogram puzzle
 type method int
@@ -51,6 +55,7 @@ type master struct {
 	Jobs       chan method
 	NumWorkers int
 	Outboxes   []chan move
+	Prepare    chan move
 	Puzzle     nonogram
 	Workers    []worker
 }
@@ -58,6 +63,7 @@ type master struct {
 func (m master) Manage() {
 	fmt.Println("Master is managing.")
 	go m.processInbox()
+	go m.prepareJSON()
 
 	fmt.Println("Starting workers")
 	for _, w := range m.Workers {
@@ -68,19 +74,22 @@ func (m master) Manage() {
 func (m master) processInbox() {
 	for mv := range m.Inbox {
 
-		fmt.Printf("[Master] Recieved move from Worker %d: %s\n", mv.From, mv)
-		err := m.makeMark(mv)
-		checkError(err, "Master could not apply move.")
+		fmt.Printf("[Master] Recieved move: %s\n", mv)
+
+		m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
+		m.Prepare <- mv
+
 	}
 }
 
-func (m master) makeMark(mv move) error {
-	/*
-		- check for errors...
-	*/
-	m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
-
-	return nil
+func (m master) prepareJSON() {
+	var moveList []map[string]int
+	enc := json.NewEncoder(os.Stdout)
+	for mv := range m.Prepare {
+		moveList = append(moveList, mv.Map())
+		err := enc.Encode(moveList)
+		checkError(err, "Unable to prepare JSON.")
+	}
 }
 
 func newMaster(n nonogram, numWorkers int) (m master) {
@@ -91,6 +100,7 @@ func newMaster(n nonogram, numWorkers int) (m master) {
 	}
 	m.NumWorkers = numWorkers
 	m.Outboxes = make([]chan move, numWorkers)
+	m.Prepare = make(chan move, numWorkers)
 	m.Puzzle = n
 	m.Workers = make([]worker, numWorkers)
 	for i := 0; i < numWorkers; i++ {

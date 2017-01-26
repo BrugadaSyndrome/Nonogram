@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 type indexData struct {
 	Master  master
@@ -27,5 +30,12 @@ func handleIndex(w http.ResponseWriter, req *http.Request) {
 		serverMaster.Manage()
 	} else {
 		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func handleMoves(w http.ResponseWriter, req *http.Request) {
+	if req.Method == "GET" {
+		w.WriteHeader(http.StatusOK)
+		fmt.Println("Moves requested")
 	}
 }

@@ -71,7 +71,7 @@ func (w worker) Boxes() {
 
 		for i, j := 0, len(L)-1; i < len(L) && j >= 0; i, j = i+1, j-1 {
 			if L[i] == L[j] && L[i] == filled && L[j] == filled {
-				w.Outbox <- move{w.ID, filled, rowIndex, i}
+				w.Outbox <- move{filled, rowIndex, i}
 			}
 		}
 	}

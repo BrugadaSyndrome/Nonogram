@@ -35,14 +35,21 @@ func (m mark) String() string {
 // X is the column position of the mark
 // Y is the row position of the mark
 type move struct {
-	From int
 	Mark mark
 	X    int
 	Y    int
 }
 
-func (m move) String() string {
-	return fmt.Sprintf("%s (%d,%d)", m.Mark, m.X, m.Y)
+func (mv move) String() string {
+	return fmt.Sprintf("%s (%d,%d)", mv.Mark, mv.X, mv.Y)
+}
+
+func (mv move) Map() (tmpMap map[string]int) {
+	tmpMap = make(map[string]int)
+	tmpMap["Mark"] = int(mv.Mark)
+	tmpMap["X"] = mv.X
+	tmpMap["Y"] = mv.Y
+	return
 }
 
 // Nonogram represents the state of a nonogram puzzle
