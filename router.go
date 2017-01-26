@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -14,12 +16,10 @@ type indexData struct {
 func handleIndex(w http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
-
-		n := loadNonogram("./static/puzzles/puzzle2.json")
-		serverMaster := newMaster(n, 2)
+		fmt.Printf("handleIndex: %p\n", serverMaster)
 
 		context := indexData{
-			Master:  serverMaster,
+			Master:  *serverMaster,
 			Seconds: 3,
 			Title:   "Nonogram Solver",
 		}
@@ -36,6 +36,21 @@ func handleIndex(w http.ResponseWriter, req *http.Request) {
 func handleMoves(w http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
+
 		fmt.Println("Moves requested")
+		var buffer bytes.Buffer
+		enc := json.NewEncoder(&buffer)
+
+		fmt.Printf("handleMoves: %p\n", serverMaster)
+
+		serverMaster.Mux.Lock()
+		fmt.Println("handleMovess() has control.")
+		err := enc.Encode(serverMaster.MoveList)
+		checkError(err, "Unable to prepare JSON.")
+		//serverMaster.MoveList = []map[string]int{} // empty list
+		serverMaster.Mux.Unlock()
+		fmt.Println("handleMovess() gives up control.")
+
+		fmt.Println(buffer.String())
 	}
 }

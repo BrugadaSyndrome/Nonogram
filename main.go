@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -11,7 +12,7 @@ import (
 
 var (
 	templates    *template.Template
-	serverMaster master
+	serverMaster *master
 )
 
 func init() {
@@ -37,6 +38,10 @@ func init() {
 
 	templates, err = template.New(filepath.Base(allFiles[0])).Funcs(functions).ParseFiles(allFiles...)
 	checkError(err, "Unable to parse all templates.")
+
+	n := loadNonogram("./static/puzzles/puzzle2.json")
+	serverMaster := newMaster(n, 2)
+	fmt.Printf("init: %p\n", serverMaster)
 }
 
 func main() {

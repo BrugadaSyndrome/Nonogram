@@ -20,7 +20,7 @@ type worker struct {
 }
 
 func (w worker) Work() {
-	fmt.Printf("[Worker %d] starting work.\n", w.ID)
+	fmt.Printf("[Worker %d] Starting work.\n", w.ID)
 
 	job := <-w.Jobs
 
@@ -47,7 +47,7 @@ func (w worker) Work() {
 	}
 
 	w.Jobs <- job
-	fmt.Printf("[Worker %d] done working. Returning job: %s.\n", w.ID, job)
+	fmt.Printf("[Worker %d] Done working. Returning job: %s.\n", w.ID, job)
 }
 
 func (w worker) Boxes() {
@@ -76,7 +76,7 @@ func (w worker) Boxes() {
 		}
 	}
 
-	fmt.Printf("[Worker %d] is done running Boxes\n", w.ID)
+	fmt.Printf("[Worker %d] Done running boxes.\n", w.ID)
 }
 
 func newWorker(n nonogram, id int, masterInbox chan move) (w worker) {

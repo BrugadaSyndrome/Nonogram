@@ -1,9 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
+	"sync"
 )
 
 // Method is an enum for methods of solving a nonogram puzzle
@@ -51,19 +50,21 @@ func (m method) String() string {
 // Outboxes is a list of channels that workers will listen on to receive updates from the master
 // Puzzle master instance of puzzle
 type master struct {
+	Collect    chan move
 	Inbox      chan move
 	Jobs       chan method
+	MoveList   []map[string]int
+	Mux        sync.Mutex
 	NumWorkers int
 	Outboxes   []chan move
-	Prepare    chan move
 	Puzzle     nonogram
 	Workers    []worker
 }
 
-func (m master) Manage() {
+func (m *master) Manage() {
 	fmt.Println("Master is managing.")
 	go m.processInbox()
-	go m.prepareJSON()
+	go m.aggregateMoves()
 
 	fmt.Println("Starting workers")
 	for _, w := range m.Workers {
@@ -71,28 +72,28 @@ func (m master) Manage() {
 	}
 }
 
-func (m master) processInbox() {
+func (m *master) processInbox() {
 	for mv := range m.Inbox {
-
 		fmt.Printf("[Master] Recieved move: %s\n", mv)
-
 		m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
-		m.Prepare <- mv
-
+		m.Collect <- mv
 	}
 }
 
-func (m master) prepareJSON() {
-	var moveList []map[string]int
-	enc := json.NewEncoder(os.Stdout)
-	for mv := range m.Prepare {
-		moveList = append(moveList, mv.Map())
-		err := enc.Encode(moveList)
-		checkError(err, "Unable to prepare JSON.")
+func (m *master) aggregateMoves() {
+	for mv := range m.Collect {
+		m.Mux.Lock()
+		fmt.Println("master.aggreagateMoves() has control.")
+		m.MoveList = append(m.MoveList, mv.Map())
+		m.Mux.Unlock()
+		fmt.Println("master.aggreagateMoves() gives up control.")
 	}
 }
 
-func newMaster(n nonogram, numWorkers int) (m master) {
+func newMaster(n nonogram, numWorkers int) (m *master) {
+	m = &master{}
+	fmt.Printf("newMaster: %p\n", m)
+	m.Collect = make(chan move, numWorkers)
 	m.Inbox = make(chan move, numWorkers)
 	m.Jobs = make(chan method, numMethods)
 	for i := 0; i < int(numMethods); i++ {
@@ -100,7 +101,6 @@ func newMaster(n nonogram, numWorkers int) (m master) {
 	}
 	m.NumWorkers = numWorkers
 	m.Outboxes = make([]chan move, numWorkers)
-	m.Prepare = make(chan move, numWorkers)
 	m.Puzzle = n
 	m.Workers = make([]worker, numWorkers)
 	for i := 0; i < numWorkers; i++ {
@@ -108,6 +108,5 @@ func newMaster(n nonogram, numWorkers int) (m master) {
 		m.Workers[i].Jobs = m.Jobs
 		m.Outboxes[i] = m.Workers[i].Inbox
 	}
-
 	return
 }
