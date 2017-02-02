@@ -92,7 +92,6 @@ func (m *master) aggregateMoves() {
 
 func newMaster(n nonogram, numWorkers int) (m *master) {
 	m = &master{}
-	fmt.Printf("newMaster: %p\n", m)
 	m.Collect = make(chan move, numWorkers)
 	m.Inbox = make(chan move, numWorkers)
 	m.Jobs = make(chan method, numMethods)

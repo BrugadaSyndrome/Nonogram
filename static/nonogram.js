@@ -18,4 +18,3 @@ var requestMoves = function() {
 for (i = 1; i <= 5; i++) {
     setTimeout(requestMoves, i*3000);
 }
-console.log("Polling time up.")

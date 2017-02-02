@@ -4,7 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 )
+
+type nonogramContext struct {
+	Master *master
+}
+
+type nonogramHandler struct {
+	Context *nonogramContext
+	H       func(*nonogramContext, http.ResponseWriter, *http.Request)
+}
+
+func (nh nonogramHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	nh.H(nh.Context, w, r)
+}
 
 // Mark is an enum for what is put into a cell on a board
 type mark int

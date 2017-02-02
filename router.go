@@ -1,56 +1,65 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 type indexData struct {
-	Master  master
-	Seconds int
-	Title   string
+	Master master
+	Title  string
 }
 
-func handleIndex(w http.ResponseWriter, req *http.Request) {
+func handleIndex(ctx *nonogramContext, w http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
-		fmt.Printf("handleIndex: %p\n", serverMaster)
 
 		context := indexData{
-			Master:  *serverMaster,
-			Seconds: 3,
-			Title:   "Nonogram Solver",
+			Master: *ctx.Master,
+			Title:  "Nonogram Solver",
 		}
+
+		fmt.Printf("handleIndex: [%p] %+v\n", ctx.Master, ctx.Master.Puzzle.Board)
 
 		err := templates.Execute(w, context)
 		checkError(err, "Failed to execute templates.")
 
-		serverMaster.Manage()
+		ctx.Master.Manage()
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
-func handleMoves(w http.ResponseWriter, req *http.Request) {
+func handleMoves(ctx *nonogramContext, w http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Println("Moves requested")
-		var buffer bytes.Buffer
-		enc := json.NewEncoder(&buffer)
+		context := indexData{
+			Master: *ctx.Master,
+			Title:  "Nonogram Solver",
+		}
 
-		fmt.Printf("handleMoves: %p\n", serverMaster)
+		fmt.Printf("handleMoves: [%p] %+v\n", ctx.Master, ctx.Master.Puzzle.Board)
 
-		serverMaster.Mux.Lock()
-		fmt.Println("handleMovess() has control.")
-		err := enc.Encode(serverMaster.MoveList)
-		checkError(err, "Unable to prepare JSON.")
-		//serverMaster.MoveList = []map[string]int{} // empty list
-		serverMaster.Mux.Unlock()
-		fmt.Println("handleMovess() gives up control.")
+		err := templates.Execute(w, context)
+		checkError(err, "Failed to execute templates.")
 
-		fmt.Println(buffer.String())
+		/*
+			fmt.Println("Moves requested")
+			var buffer bytes.Buffer
+			enc := json.NewEncoder(&buffer)
+
+			ctx.Master.Mux.Lock()
+			fmt.Println("handleMoves() has control.")
+			err := enc.Encode(ctx.Master.MoveList)
+			checkError(err, "Unable to prepare JSON.")
+			ctx.Master.MoveList = []map[string]int{} // empty list
+			ctx.Master.Mux.Unlock()
+			fmt.Println("handleMoves() gives up control.")
+
+			fmt.Println(buffer.String())
+		*/
+	} else {
+		w.WriteHeader(http.StatusNotFound)
 	}
 }

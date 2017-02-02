@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -11,8 +10,7 @@ import (
 )
 
 var (
-	templates    *template.Template
-	serverMaster *master
+	templates *template.Template
 )
 
 func init() {
@@ -38,10 +36,6 @@ func init() {
 
 	templates, err = template.New(filepath.Base(allFiles[0])).Funcs(functions).ParseFiles(allFiles...)
 	checkError(err, "Unable to parse all templates.")
-
-	n := loadNonogram("./static/puzzles/puzzle2.json")
-	serverMaster := newMaster(n, 2)
-	fmt.Printf("init: %p\n", serverMaster)
 }
 
 func main() {
@@ -49,9 +43,11 @@ func main() {
 	fileServer := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
+	ctx := &nonogramContext{Master: newMaster(loadNonogram("./static/puzzles/puzzle2.json"), 2)}
+
 	// handle URLs
-	http.HandleFunc("/", handleIndex)
-	http.HandleFunc("/moves", handleMoves)
+	http.Handle("/", nonogramHandler{ctx, handleIndex})
+	http.Handle("/moves", nonogramHandler{ctx, handleMoves})
 
 	// run server
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
