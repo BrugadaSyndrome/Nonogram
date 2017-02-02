@@ -10,11 +10,9 @@ h3 {
 
 td {
     border: 1px solid black;
-    height: 1.5em;
-    width: 1.5em;
 }
 
-th {
+td, th {
     height: 1.5em;
     width: 1.5em;
 }
@@ -36,7 +34,7 @@ th {
 }
 
 .empty {
-    background-color: gray;
+    background-color: lightgray;
 }
 
 .filled {

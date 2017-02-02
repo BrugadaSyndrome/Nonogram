@@ -30,6 +30,7 @@ func (w worker) Work() {
 		w.Boxes()
 	case spaces:
 		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		w.Spaces()
 	case forcing:
 		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case glue:
@@ -69,6 +70,19 @@ func (w worker) Boxes() {
 		}
 		//fmt.Printf("[Worker %d] L: %v\n", w.ID, L)
 
+		/*
+			## BUG ##
+			- Comparing the list in reverse is not correct!
+			- EX. hints (2 2 1) with a width of 10
+			- CURRENT
+				  left fill  - - - - -> ffcffcfcee
+				  reverse left fill  -> eecfcffcff => eeefeefeee
+			- FIX
+				  left fill  - - - - -> ffcffcfcee
+			      right fill - - - - -> eecffcffcf => eeeffefeee
+
+			- [ ] Need to compare from 2 lists. One filled from the left and one filled from the right.
+		*/
 		for i, j := 0, len(L)-1; i < len(L) && j >= 0; i, j = i+1, j-1 {
 			if L[i] == L[j] && L[i] == filled && L[j] == filled {
 				w.Outbox <- move{filled, rowIndex, i}
@@ -76,7 +90,49 @@ func (w worker) Boxes() {
 		}
 	}
 
-	fmt.Printf("[Worker %d] Done running boxes.\n", w.ID)
+	fmt.Printf("[Worker %d] Done running Boxes.\n", w.ID)
+}
+
+func (w worker) Spaces() {
+	/*
+		- What if the board already has filled cells?
+	*/
+	fmt.Printf("[Worker %d] is running Spaces\n", w.ID)
+
+	for rowIndex, row := range w.Puzzle.RowHints {
+		L := make([]mark, w.Puzzle.Width)
+		i := 0
+		for _, hint := range row {
+			for z := i; z < i+hint; z++ {
+				L[z] = filled
+			}
+			i += hint
+			L[i] = crossed
+			i++
+		}
+		//fmt.Printf("[Worker %d] L: %v\n", w.ID, L)
+
+		/*
+			## BUG ##
+			- Comparing the list in reverse is not correct!
+			- EX. hints (2 2 1) with a width of 10
+			- CURRENT
+				  left fill  - - - - -> ffcffcfcee
+				  reverse left fill  -> eecfcffcff => eeceeeecee
+			- FIX
+				  left fill  - - - - -> ffcffcfcee
+			      right fill - - - - -> eecffcffcf => eeceeceeee
+
+			- [ ] Need to compare from 2 lists. One filled from the left and one filled from the right.
+		*/
+		for i, j := 0, len(L)-1; i < len(L) && j >= 0; i, j = i+1, j-1 {
+			if L[i] == L[j] && L[i] == crossed && L[j] == crossed {
+				w.Outbox <- move{crossed, rowIndex, i}
+			}
+		}
+	}
+
+	fmt.Printf("[Worker %d] Done running Spaces.\n", w.ID)
 }
 
 func newWorker(n nonogram, id int, masterInbox chan move) (w worker) {
