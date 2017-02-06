@@ -25,12 +25,9 @@ func (w worker) Work() {
 	job := <-w.Jobs
 
 	switch job {
-	case boxes:
+	case boxesAndSpaces:
 		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-		w.Boxes()
-	case spaces:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-		w.Spaces()
+		w.BoxesAndSpaces()
 	case forcing:
 		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
 	case glue:
@@ -51,88 +48,56 @@ func (w worker) Work() {
 	fmt.Printf("[Worker %d] Done working. Returning job: %s.\n", w.ID, job)
 }
 
-func (w worker) Boxes() {
+func (w worker) BoxesAndSpaces() {
 	/*
 		- What if the board already has filled cells?
+		! With puzzle1.json, row 2 is filled in incorrectly according to the final solution.
+			It is still correct according to the solving method. Will need to keep an eye on
+			occurances like this and develop a method to handle these 'contradictions'.
 	*/
 	fmt.Printf("[Worker %d] is running Boxes\n", w.ID)
 
-	for rowIndex, row := range w.Puzzle.RowHints {
-		L := make([]mark, w.Puzzle.Width)
-		i := 0
-		for _, hint := range row {
-			for z := i; z < i+hint; z++ {
+	for rowIndex, hints := range w.Puzzle.RowHints {
+		num := len(hints)
+		L, R := make([]mark, w.Puzzle.Width), make([]mark, w.Puzzle.Width)
+		a, b := 0, 0
+
+		for i, j := 0, num-1; i < num && j >= 0; i, j = i+1, j-1 {
+			// left fill
+			for z := a; z < a+hints[i]; z++ {
 				L[z] = filled
 			}
-			i += hint
-			L[i] = crossed
-			i++
+			a += hints[i] + 1
+			// only pad with a cross if not off the edge of the board
+			if a-1 < w.Puzzle.Width {
+				L[a-1] = crossed
+			}
+
+			// right fill
+			for z := b; z < b+hints[j]; z++ {
+				R[w.Puzzle.Width-1-z] = filled
+			}
+			b += hints[j] + 1
+			// only pad with a cross if not off the edge of the board
+			if w.Puzzle.Width-b >= 0 {
+				R[w.Puzzle.Width-b] = crossed
+			}
+
 		}
-		//fmt.Printf("[Worker %d] L: %v\n", w.ID, L)
+		//fmt.Printf("[Worker %d] L: %v || R: %v\n", w.ID, L, R)
 
-		/*
-			## BUG ##
-			- Comparing the list in reverse is not correct!
-			- EX. hints (2 2 1) with a width of 10
-			- CURRENT
-				  left fill  - - - - -> ffcffcfcee
-				  reverse left fill  -> eecfcffcff => eeefeefeee
-			- FIX
-				  left fill  - - - - -> ffcffcfcee
-			      right fill - - - - -> eecffcffcf => eeeffefeee
-
-			- [ ] Need to compare from 2 lists. One filled from the left and one filled from the right.
-		*/
-		for i, j := 0, len(L)-1; i < len(L) && j >= 0; i, j = i+1, j-1 {
-			if L[i] == L[j] && L[i] == filled && L[j] == filled {
-				w.Outbox <- move{filled, rowIndex, i}
+		for i := 0; i < w.Puzzle.Width; i++ {
+			if L[i] == R[i] {
+				if L[i] == filled {
+					w.Outbox <- move{filled, rowIndex, i}
+				} else if L[i] == crossed {
+					w.Outbox <- move{crossed, rowIndex, i}
+				}
 			}
 		}
 	}
 
 	fmt.Printf("[Worker %d] Done running Boxes.\n", w.ID)
-}
-
-func (w worker) Spaces() {
-	/*
-		- What if the board already has filled cells?
-	*/
-	fmt.Printf("[Worker %d] is running Spaces\n", w.ID)
-
-	for rowIndex, row := range w.Puzzle.RowHints {
-		L := make([]mark, w.Puzzle.Width)
-		i := 0
-		for _, hint := range row {
-			for z := i; z < i+hint; z++ {
-				L[z] = filled
-			}
-			i += hint
-			L[i] = crossed
-			i++
-		}
-		//fmt.Printf("[Worker %d] L: %v\n", w.ID, L)
-
-		/*
-			## BUG ##
-			- Comparing the list in reverse is not correct!
-			- EX. hints (2 2 1) with a width of 10
-			- CURRENT
-				  left fill  - - - - -> ffcffcfcee
-				  reverse left fill  -> eecfcffcff => eeceeeecee
-			- FIX
-				  left fill  - - - - -> ffcffcfcee
-			      right fill - - - - -> eecffcffcf => eeceeceeee
-
-			- [ ] Need to compare from 2 lists. One filled from the left and one filled from the right.
-		*/
-		for i, j := 0, len(L)-1; i < len(L) && j >= 0; i, j = i+1, j-1 {
-			if L[i] == L[j] && L[i] == crossed && L[j] == crossed {
-				w.Outbox <- move{crossed, rowIndex, i}
-			}
-		}
-	}
-
-	fmt.Printf("[Worker %d] Done running Spaces.\n", w.ID)
 }
 
 func newWorker(n nonogram, id int, masterInbox chan move) (w worker) {

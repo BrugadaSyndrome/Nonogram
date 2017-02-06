@@ -29,7 +29,7 @@ func handleIndex(ctx *nonogramContext, w http.ResponseWriter, req *http.Request)
 			- [ ] Move to its own handler
 			- [ ] That handler will be called by the client when it is ready to see the puzzle solved
 		*/
-		ctx.Master.Manage()
+		//ctx.Master.Manage()
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
@@ -43,12 +43,13 @@ func handleMoves(ctx *nonogramContext, w http.ResponseWriter, req *http.Request)
 		enc := json.NewEncoder(w)
 
 		ctx.Master.Mux.Lock()
-		fmt.Println("handleMoves() has control.")
+		//fmt.Println("handleMoves() has control.")
 		err := enc.Encode(ctx.Master.MoveList)
 		checkError(err, "Unable to prepare JSON.")
-		ctx.Master.MoveList = []map[string]int{} // empty list
+		// empty the list
+		ctx.Master.MoveList = []map[string]int{}
 		ctx.Master.Mux.Unlock()
-		fmt.Println("handleMoves() gives up control.")
+		//fmt.Println("handleMoves() gives up control.")
 
 	} else {
 		w.WriteHeader(http.StatusNotFound)

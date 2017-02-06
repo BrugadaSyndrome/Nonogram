@@ -33,6 +33,9 @@ var requestMoves = function() {
     request.send();
 };
 
+/*
 for (i = 1; i <= 5; i++) {
     setTimeout(requestMoves, i*3000);
 }
+*/
+setInterval(requestMoves, 3000);

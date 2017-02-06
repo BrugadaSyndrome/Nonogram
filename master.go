@@ -9,8 +9,7 @@ import (
 type method int
 
 const (
-	boxes method = iota
-	spaces
+	boxesAndSpaces method = iota
 	forcing
 	glue
 	joining
@@ -24,9 +23,7 @@ func (m method) String() string {
 	var txt string
 	switch m {
 	case 0:
-		txt = "boxes"
-	case 1:
-		txt = "spaces"
+		txt = "boxes/spaces"
 	case 2:
 		txt = "forcing"
 	case 3:
@@ -83,10 +80,10 @@ func (m *master) processInbox() {
 func (m *master) aggregateMoves() {
 	for mv := range m.Collect {
 		m.Mux.Lock()
-		fmt.Println("master.aggreagateMoves() has control.")
+		//fmt.Println("master.aggreagateMoves() has control.")
 		m.MoveList = append(m.MoveList, mv.Map())
 		m.Mux.Unlock()
-		fmt.Println("master.aggreagateMoves() gives up control.")
+		//fmt.Println("master.aggreagateMoves() gives up control.")
 	}
 }
 
