@@ -24,17 +24,17 @@ func (m method) String() string {
 	switch m {
 	case 0:
 		txt = "boxes/spaces"
-	case 2:
+	case 1:
 		txt = "forcing"
-	case 3:
+	case 2:
 		txt = "glue"
-	case 4:
+	case 3:
 		txt = "joining"
-	case 5:
+	case 4:
 		txt = "splitting"
-	case 6:
+	case 5:
 		txt = "punctuating"
-	case 7:
+	case 6:
 		txt = "mercury"
 	default:
 		txt = "Undefined!"

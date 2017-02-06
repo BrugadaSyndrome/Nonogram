@@ -22,38 +22,41 @@ type worker struct {
 func (w worker) Work() {
 	fmt.Printf("[Worker %d] Starting work.\n", w.ID)
 
-	job := <-w.Jobs
+	for {
+		job := <-w.Jobs
 
-	switch job {
-	case boxesAndSpaces:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-		w.BoxesAndSpaces()
-	case forcing:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-	case glue:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-	case joining:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-	case splitting:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-	case punctuating:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-	case mercury:
-		fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
-	default:
-		log.Fatalf("Worker got unknown job: int(%d) string(%s)", job, job)
+		switch job {
+		case boxesAndSpaces:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+			w.BoxesAndSpaces()
+		case forcing:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		case glue:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		case joining:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		case splitting:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		case punctuating:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		case mercury:
+			fmt.Printf("[Worker %d] job is: %s\n", w.ID, job)
+		default:
+			log.Fatalf("Worker got unknown job: int(%d) string(%s)", job, job)
+		}
+
+		w.Jobs <- job
+		fmt.Printf("[Worker %d] Done working. Returning job: %s.\n", w.ID, job)
 	}
-
-	w.Jobs <- job
-	fmt.Printf("[Worker %d] Done working. Returning job: %s.\n", w.ID, job)
 }
 
 func (w worker) BoxesAndSpaces() {
 	/*
-		- What if the board already has filled cells?
 		! With puzzle1.json, row 2 is filled in incorrectly according to the final solution.
 			It is still correct according to the solving method. Will need to keep an eye on
 			occurances like this and develop a method to handle these 'contradictions'.
+
+
 	*/
 	fmt.Printf("[Worker %d] is running Boxes\n", w.ID)
 
