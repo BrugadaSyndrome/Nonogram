@@ -18,7 +18,7 @@ td, th {
 }
 
 #master {
-    border: 1px solid red;
+    border: 1px solid black;
     float: left;
     margin: 1%;
     padding: 1%;
@@ -30,15 +30,23 @@ td, th {
 }
 
 .crossed {
-    background-color: white;
+    background-color: #000000;
 }
 
 .empty {
-    background-color: lightgray;
+    background-color: #757575;
 }
 
 .filled {
-    background-color: black;
+    background-color: #FFFFFF;
+}
+
+.maybeCrossed {
+    background-color: #BCBCFF;
+}
+
+.maybeFilled {
+    background-color: #3535FF;
 }
 
 .hidden {
@@ -46,7 +54,7 @@ td, th {
 }
 
 .worker {
-    border: 1px solid blue;
+    border: 1px solid black;
     float: left;
     margin: 1%;
     padding: 1%;

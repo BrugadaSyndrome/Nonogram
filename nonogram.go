@@ -27,6 +27,8 @@ const (
 	empty mark = iota
 	filled
 	crossed
+	maybeFilled
+	maybeCrossed
 )
 
 func (m mark) String() string {
@@ -38,6 +40,10 @@ func (m mark) String() string {
 		txt = "fill"
 	case 2:
 		txt = "cross"
+	case 3:
+		txt = "maybeFilled"
+	case 4:
+		txt = "maybeCrossed"
 	default:
 		txt = "Undefined!"
 	}

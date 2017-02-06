@@ -6,7 +6,8 @@
 
     <body>
         <div id="master">
-            {{template "master" .Master}}
+            <h3>Master</h3>
+            {{template "nonogram" .Master.Puzzle}}
         </div>
 
         {{/*
@@ -16,7 +17,7 @@
             {{end}}
         </div>
         */}}
-        
+
         <script src="static/nonogram.js"></script>
         
     </body>

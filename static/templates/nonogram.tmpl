@@ -43,6 +43,10 @@
                         <td id="cell_{{$i}}_{{$j}}" class="filled">&nbsp;</td>
                     {{else if eq (index $.Board $i $j) 2}} 
                         <td id="cell_{{$i}}_{{$j}}" class="crossed">&nbsp;</td>
+                    {{else if eq (index $.Board $i $j) 3}} 
+                        <td id="cell_{{$i}}_{{$j}}" class="maybeFilled">&nbsp;</td>
+                    {{else if eq (index $.Board $i $j) 4}} 
+                        <td id="cell_{{$i}}_{{$j}}" class="maybeCrossed">&nbsp;</td>
                     {{end}}
                 {{end}}
             </tr>
