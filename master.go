@@ -72,7 +72,26 @@ func (m *master) Manage() {
 func (m *master) processInbox() {
 	for mv := range m.Inbox {
 		fmt.Printf("[Master] Recieved move: %s\n", mv)
-		m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
+
+		var appliedMove mark
+		if m.Puzzle.Board[mv.X][mv.Y] == empty {
+			// unknown -> set as mv.Mark
+			appliedMove = mv.Mark
+		} else if m.Puzzle.Board[mv.X][mv.Y] == maybeFilled && mv.Mark == maybeFilled {
+			// confirmation -> set as filled
+			appliedMove = filled
+		} else if m.Puzzle.Board[mv.X][mv.Y] == maybeCrossed && mv.Mark == maybeCrossed {
+			// confirmation -> set as crossed
+			appliedMove = crossed
+		} else if (m.Puzzle.Board[mv.X][mv.Y] == maybeFilled || m.Puzzle.Board[mv.X][mv.Y] == filled) && (mv.Mark == maybeCrossed || mv.Mark == crossed) {
+			// contradiction -> set as empty
+			appliedMove = empty
+		} else if (m.Puzzle.Board[mv.X][mv.Y] == maybeCrossed || m.Puzzle.Board[mv.X][mv.Y] == crossed) && (mv.Mark == maybeFilled || mv.Mark == filled) {
+			// contradiction -> set as empty
+			appliedMove = empty
+		}
+
+		m.Puzzle.Board[mv.X][mv.Y] = appliedMove
 		m.Collect <- mv
 	}
 }

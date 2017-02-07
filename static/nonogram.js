@@ -9,6 +9,10 @@ var updateMaster = function(moves) {
             document.getElementById(ID).setAttribute("class", "filled");
         } else if (moves[i].Mark == 2) {
             document.getElementById(ID).setAttribute("class", "crossed");
+        } else if (moves[i].Mark == 3) {
+            document.getElementById(ID).setAttribute("class", "maybe_filled");
+        } else if (moves[i].Mark == 4) {
+            document.getElementById(ID).setAttribute("class", "maybe_crossed");
         }
     }
 
@@ -33,9 +37,4 @@ var requestMoves = function() {
     request.send();
 };
 
-/*
-for (i = 1; i <= 5; i++) {
-    setTimeout(requestMoves, i*3000);
-}
-*/
 setInterval(requestMoves, 3000);

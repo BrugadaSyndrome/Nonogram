@@ -30,7 +30,7 @@ td, th {
 }
 
 .crossed {
-    background-color: #000000;
+    background-color: #FFFFFF;
 }
 
 .empty {
@@ -38,15 +38,15 @@ td, th {
 }
 
 .filled {
-    background-color: #FFFFFF;
+    background-color: #000000;
 }
 
-.maybeCrossed {
-    background-color: #BCBCFF;
+.maybe_crossed {
+    background-color: #FFFF75;
 }
 
-.maybeFilled {
-    background-color: #3535FF;
+.maybe_filled {
+    background-color: #0000BC;
 }
 
 .hidden {
