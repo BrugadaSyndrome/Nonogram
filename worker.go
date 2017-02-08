@@ -107,9 +107,9 @@ func (w worker) BoxesAndSpaces(hintList [][]int, horizontal bool) {
 				}
 
 				if L[i] == maybeFilled {
-					w.Outbox <- move{maybeFilled, x, y}
+					w.Outbox <- move{maybeFilled, 0, x, y}
 				} else if L[i] == maybeCrossed {
-					w.Outbox <- move{maybeCrossed, x, y}
+					w.Outbox <- move{maybeCrossed, 0, x, y}
 				}
 			}
 		}

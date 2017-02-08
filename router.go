@@ -23,13 +23,6 @@ func handleIndex(ctx *nonogramContext, w http.ResponseWriter, req *http.Request)
 		err := templates.Execute(w, context)
 		checkError(err, "Failed to execute templates.")
 
-		/*
-			## TODO/BUG ##
-			- This needs to be called once and only once!
-			- [ ] Move to its own handler
-			- [ ] That handler will be called by the client when it is ready to see the puzzle solved
-		*/
-		//ctx.Master.Manage()
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
@@ -50,6 +43,17 @@ func handleMoves(ctx *nonogramContext, w http.ResponseWriter, req *http.Request)
 		ctx.Master.MoveList = []map[string]int{}
 		ctx.Master.Mux.Unlock()
 		//fmt.Println("handleMoves() gives up control.")
+
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func handleSolve(ctx *nonogramContext, w http.ResponseWriter, req *http.Request) {
+	if req.Method == "GET" {
+		w.WriteHeader(http.StatusOK)
+
+		ctx.Master.Manage()
 
 	} else {
 		w.WriteHeader(http.StatusNotFound)

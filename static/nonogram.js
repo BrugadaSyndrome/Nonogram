@@ -4,7 +4,7 @@ var updateMaster = function(moves) {
     var masterBoard = document.getElementsByClassName("nonogram")[0];
     for (var i in moves) {
         console.log(moves[i]);
-        ID = "cell_"+moves[i].X+"_"+moves[i].Y;
+        ID = moves[i].Target +"_"+moves[i].X+"_"+moves[i].Y;
         if (moves[i].Mark == 1) {
             document.getElementById(ID).setAttribute("class", "filled");
         } else if (moves[i].Mark == 2) {
@@ -37,4 +37,31 @@ var requestMoves = function() {
     request.send();
 };
 
+var requestStartSolving = function() {
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (request.readyState == XMLHttpRequest.DONE) {
+            if (request.status >= 200 && request.status < 400) {
+                console.log("Request to solve successful.");
+                var solveButton = document.getElementById("solve");
+                solveButton.disabled = true;
+                solveButton.innerHTML = "Solving..."
+            } else {
+                console.log("Request to solve failure.");
+            }
+        }
+    }
+
+    request.open("GET", "http://localhost:8080/solve");
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    console.log("Requesting to start solving...");
+    request.send();
+};
+
+var solveButton = document.getElementById("solve");
+solveButton.onclick = function() {
+    requestStartSolving();
+}
+
 setInterval(requestMoves, 3000);
+

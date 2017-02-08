@@ -7,16 +7,18 @@
     <body>
         <div id="master">
             <h3>Master</h3>
-            {{template "nonogram" .Master.Puzzle}}
+            {{template "nonogram" .Master}}
+            <button id="solve">Solve</button>
         </div>
 
-        {{/*
         <div id="workers">
             {{range .Master.Workers}}
-                {{template "worker" .}}
+            <div id="worker_{{.ID}}" class="worker">
+                <h3>Worker {{.ID}}</h3>
+                {{template "nonogram" .}}
+            </div>
             {{end}}
         </div>
-        */}}
 
         <script src="static/nonogram.js"></script>
         

@@ -48,6 +48,7 @@ func (m method) String() string {
 // Puzzle master instance of puzzle
 type master struct {
 	Collect    chan move
+	ID         int
 	Inbox      chan move
 	Jobs       chan method
 	MoveList   []map[string]int
@@ -109,6 +110,7 @@ func (m *master) aggregateMoves() {
 func newMaster(n nonogram, numWorkers int) (m *master) {
 	m = &master{}
 	m.Collect = make(chan move, numWorkers)
+	m.ID = 0
 	m.Inbox = make(chan move, numWorkers)
 	m.Jobs = make(chan method, numMethods)
 	for i := 0; i < int(numMethods); i++ {

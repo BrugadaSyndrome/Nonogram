@@ -55,9 +55,10 @@ func (m mark) String() string {
 // X is the column position of the mark
 // Y is the row position of the mark
 type move struct {
-	Mark mark
-	X    int
-	Y    int
+	Mark   mark
+	Target int
+	X      int
+	Y      int
 }
 
 func (mv move) String() string {
@@ -67,6 +68,7 @@ func (mv move) String() string {
 func (mv move) Map() (tmpMap map[string]int) {
 	tmpMap = make(map[string]int)
 	tmpMap["Mark"] = int(mv.Mark)
+	tmpMap["Target"] = mv.Target
 	tmpMap["X"] = mv.X
 	tmpMap["Y"] = mv.Y
 	return

@@ -44,11 +44,12 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	ctx := &nonogramContext{Master: newMaster(loadNonogram("./static/puzzles/puzzle1.json"), 1)}
-	ctx.Master.Manage()
+	//ctx.Master.Manage()
 
 	// handle URLs
 	http.Handle("/", nonogramHandler{ctx, handleIndex})
 	http.Handle("/moves", nonogramHandler{ctx, handleMoves})
+	http.Handle("/solve", nonogramHandler{ctx, handleSolve})
 
 	// run server
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
