@@ -27,6 +27,8 @@ var requestMoves = function() {
                 updateMaster(JSON.parse(request.responseText));
             } else {
                 console.log("Request moves failure.");
+                // stop asking for moves
+                clearInterval(intervalID);
             }
         }
     }
@@ -63,5 +65,4 @@ solveButton.onclick = function() {
     requestStartSolving();
 }
 
-setInterval(requestMoves, 3000);
-
+var intervalID = setInterval(requestMoves, 3000);

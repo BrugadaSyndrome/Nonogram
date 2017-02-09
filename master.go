@@ -93,6 +93,7 @@ func (m *master) processInbox() {
 		}
 
 		m.Puzzle.Board[mv.X][mv.Y] = appliedMove
+		mv.Mark = appliedMove
 		m.Collect <- mv
 	}
 }
