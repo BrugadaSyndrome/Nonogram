@@ -21,7 +21,7 @@ func init() {
 
 	for _, file := range files {
 		filename := file.Name()
-		if strings.HasSuffix(filename, ".tmpl") {
+		if strings.HasSuffix(filename, ".html") {
 			allFiles = append(allFiles, "./static/templates/"+filename)
 		}
 	}
@@ -44,7 +44,6 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	ctx := &nonogramContext{Master: newMaster(loadNonogram("./static/puzzles/puzzle1.json"), 1)}
-	//ctx.Master.Manage()
 
 	// handle URLs
 	http.Handle("/", nonogramHandler{ctx, handleIndex})
