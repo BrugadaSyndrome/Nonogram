@@ -74,26 +74,31 @@ func (m *master) processInbox() {
 	for mv := range m.Inbox {
 		fmt.Printf("[Master] Recieved move: %s\n", mv)
 
-		var appliedMove mark
-		if m.Puzzle.Board[mv.X][mv.Y] == empty {
-			// unknown -> set as mv.Mark
-			appliedMove = mv.Mark
-		} else if m.Puzzle.Board[mv.X][mv.Y] == maybeFilled && mv.Mark == maybeFilled {
-			// confirmation -> set as filled
-			appliedMove = filled
-		} else if m.Puzzle.Board[mv.X][mv.Y] == maybeCrossed && mv.Mark == maybeCrossed {
-			// confirmation -> set as crossed
-			appliedMove = crossed
-		} else if (m.Puzzle.Board[mv.X][mv.Y] == maybeFilled || m.Puzzle.Board[mv.X][mv.Y] == filled) && (mv.Mark == maybeCrossed || mv.Mark == crossed) {
-			// contradiction -> set as empty
-			appliedMove = empty
-		} else if (m.Puzzle.Board[mv.X][mv.Y] == maybeCrossed || m.Puzzle.Board[mv.X][mv.Y] == crossed) && (mv.Mark == maybeFilled || mv.Mark == filled) {
-			// contradiction -> set as empty
-			appliedMove = empty
+		if m.Puzzle.Board[mv.X][mv.Y] != empty {
+			if m.Puzzle.Board[mv.X][mv.Y] == maybeFilled && mv.Mark == maybeFilled {
+				// confirmation -> set as filled
+				mv.Mark = filled
+			} else if m.Puzzle.Board[mv.X][mv.Y] == maybeCrossed && mv.Mark == maybeCrossed {
+				// confirmation -> set as crossed
+				mv.Mark = crossed
+			} else if (m.Puzzle.Board[mv.X][mv.Y] == maybeFilled || m.Puzzle.Board[mv.X][mv.Y] == filled) && (mv.Mark == maybeCrossed || mv.Mark == crossed) {
+				// contradiction -> set as empty
+				mv.Mark = empty
+			} else if (m.Puzzle.Board[mv.X][mv.Y] == maybeCrossed || m.Puzzle.Board[mv.X][mv.Y] == crossed) && (mv.Mark == maybeFilled || mv.Mark == filled) {
+				// contradiction -> set as empty
+				mv.Mark = empty
+			}
+
+			//send move to workers
+			for id, outbox := range m.Outboxes {
+				tmpMove := move{mv.Mark, id + 1, mv.X, mv.Y}
+				outbox <- tmpMove
+				m.Collect <- tmpMove
+			}
 		}
 
-		m.Puzzle.Board[mv.X][mv.Y] = appliedMove
-		mv.Mark = appliedMove
+		// apply move to master
+		m.Puzzle.Board[mv.X][mv.Y] = mv.Mark
 		m.Collect <- mv
 	}
 }

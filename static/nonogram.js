@@ -3,7 +3,7 @@ var updateMaster = function(moves) {
     
     var masterBoard = document.getElementsByClassName("nonogram")[0];
     for (var i in moves) {
-        console.log(moves[i]);
+        //console.log(moves[i]);
         ID = moves[i].Target +"_"+moves[i].X+"_"+moves[i].Y;
         if (moves[i].Mark == 1) {
             document.getElementById(ID).setAttribute("class", "filled");
@@ -23,7 +23,7 @@ var requestMoves = function() {
     request.onreadystatechange = function() {
         if (request.readyState == XMLHttpRequest.DONE) {
             if (request.status >= 200 && request.status < 400) {
-                console.log("Request moves successful.");
+                //console.log("Request moves successful.");
                 updateMaster(JSON.parse(request.responseText));
             } else {
                 console.log("Request moves failure.");

@@ -19,8 +19,16 @@ type worker struct {
 	Puzzle nonogram
 }
 
+func (w worker) processInbox() {
+	for mv := range w.Inbox {
+		fmt.Printf("[Worker %d] Recieved move: %s\n", w.ID, mv)
+		w.Puzzle.Board[mv.X][mv.Y] = mv.Mark
+	}
+}
+
 func (w worker) Work() {
 	fmt.Printf("[Worker %d] Starting work.\n", w.ID)
+	go w.processInbox()
 
 	for {
 		job := <-w.Jobs

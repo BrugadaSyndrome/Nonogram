@@ -43,7 +43,7 @@ func main() {
 	fileServer := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
-	ctx := &nonogramContext{Master: newMaster(loadNonogram("./static/puzzles/puzzle1.json"), 1)}
+	ctx := &nonogramContext{Master: newMaster(loadNonogram("./static/puzzles/puzzle1.json"), 2)}
 
 	// handle URLs
 	http.Handle("/", nonogramHandler{ctx, handleIndex})
