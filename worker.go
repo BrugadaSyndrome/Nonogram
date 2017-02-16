@@ -21,7 +21,7 @@ type worker struct {
 
 func (w worker) processInbox() {
 	for mv := range w.Inbox {
-		fmt.Printf("[Worker %d] Recieved move: %s\n", w.ID, mv)
+		//fmt.Printf("[Worker %d] Recieved move: %s\n", w.ID, mv)
 		w.Puzzle.Board[mv.X][mv.Y] = mv.Mark
 	}
 }
@@ -39,7 +39,8 @@ func (w worker) Work() {
 			w.BoxesAndSpaces(w.Puzzle.RowHints, true)
 			w.BoxesAndSpaces(w.Puzzle.ColumnHints, false)
 		case forcing:
-			fmt.Printf("[Worker %d] Running Forcing\n", w.ID)
+			w.Forcing()
+			return
 		case glue:
 			fmt.Printf("[Worker %d] Running Glue\n", w.ID)
 		case joining:
@@ -56,17 +57,19 @@ func (w worker) Work() {
 
 		w.Jobs <- job
 		//fmt.Printf("[Worker %d] Done working. Returning job: %s.\n", w.ID, job)
-		break
 	}
 }
 
 func (w worker) BoxesAndSpaces(hintList [][]int, horizontal bool) {
 	/*
-		! With puzzle1.json, row 2 is filled in incorrectly according to the final solution.
-			It is still correct according to the solving method. Will need to keep an eye on
-			occurances like this and develop a method to handle these 'contradictions'.
+		Does this method need to check the cells on the board?
+		Does checking the cells help this method solve better/faster?
 	*/
-	fmt.Printf("[Worker %d] is running Boxes/Spaces (horizontal=%t)\n", w.ID, horizontal)
+	if horizontal {
+		fmt.Printf("[Worker %d] is running Boxes/Spaces (horizontal)\n", w.ID)
+	} else {
+		fmt.Printf("[Worker %d] is running Boxes/Spaces (vertical)\n", w.ID)
+	}
 
 	for rowIndex, hints := range hintList {
 		num := len(hints)
@@ -82,7 +85,11 @@ func (w worker) BoxesAndSpaces(hintList [][]int, horizontal bool) {
 		for i, j := 0, num-1; i < num && j >= 0; i, j = i+1, j-1 {
 			// left fill
 			for z := a; z < a+hints[i]; z++ {
+				//if w.Puzzle.Board[rowIndex][z] == empty {
 				L[z] = maybeFilled
+				//} else {
+				//	L[z] = w.Puzzle.Board[rowIndex][z]
+				//}
 			}
 			a += hints[i] + 1
 			// only pad with a cross if not off the edge of the board
@@ -92,7 +99,11 @@ func (w worker) BoxesAndSpaces(hintList [][]int, horizontal bool) {
 
 			// right fill
 			for z := b; z < b+hints[j]; z++ {
+				//if w.Puzzle.Board[rowIndex][z] == empty {
 				R[listCount-1-z] = maybeFilled
+				//} else {
+				//	R[z] = w.Puzzle.Board[rowIndex][z]
+				//}
 			}
 			b += hints[j] + 1
 			// only pad with a cross if not off the edge of the board
@@ -124,6 +135,27 @@ func (w worker) BoxesAndSpaces(hintList [][]int, horizontal bool) {
 	}
 
 	fmt.Printf("[Worker %d] Done running Boxes/Spaces\n", w.ID)
+}
+
+func (w worker) Forcing() {
+	fmt.Printf("[Worker %d] Running Forcing\n", w.ID)
+
+	for rowIndex, row := range w.Puzzle.Board {
+		begin, count := 0, 0
+		fmt.Println(row)
+		for itemIndex, item := range row {
+			if item != crossed {
+				count++
+			} else {
+				fmt.Printf("row: %d | count: %d | range: %d-%d\n", rowIndex, count, begin, itemIndex-1)
+				begin = itemIndex + 1
+				count = 0
+			}
+		}
+		fmt.Printf("row: %d | count: %d | range: %d-%d\n", rowIndex, count, begin, w.Puzzle.Width-1)
+	}
+
+	fmt.Printf("[Worker %d] Done running Forcing\n", w.ID)
 }
 
 func newWorker(n nonogram, id int, masterInbox chan move) (w worker) {

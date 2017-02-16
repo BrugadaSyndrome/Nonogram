@@ -72,7 +72,7 @@ func (m *master) Manage() {
 
 func (m *master) processInbox() {
 	for mv := range m.Inbox {
-		fmt.Printf("[Master] Recieved move: %s\n", mv)
+		//fmt.Printf("[Master] Recieved move: %s\n", mv)
 
 		if m.Puzzle.Board[mv.X][mv.Y] != empty {
 			if m.Puzzle.Board[mv.X][mv.Y] == maybeFilled && mv.Mark == maybeFilled {
@@ -119,9 +119,11 @@ func newMaster(n nonogram, numWorkers int) (m *master) {
 	m.ID = 0
 	m.Inbox = make(chan move, numWorkers)
 	m.Jobs = make(chan method, numMethods)
-	for i := 0; i < int(numMethods); i++ {
-		m.Jobs <- method(i)
-	}
+	//for i := 0; i < int(numMethods); i++ {
+	//	m.Jobs <- method(i)
+	//}
+	m.Jobs <- boxesAndSpaces
+	m.Jobs <- forcing
 	m.NumWorkers = numWorkers
 	m.Outboxes = make([]chan move, numWorkers)
 	m.Puzzle = n

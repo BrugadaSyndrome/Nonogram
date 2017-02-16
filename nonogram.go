@@ -35,15 +35,15 @@ func (m mark) String() string {
 	var txt string
 	switch m {
 	case 0:
-		txt = "empty"
+		txt = "_" //"empty"
 	case 1:
-		txt = "fill"
+		txt = "#"
 	case 2:
-		txt = "cross"
+		txt = "X" //"cross"
 	case 3:
-		txt = "maybeFilled"
+		txt = "m#" //"maybeFilled"
 	case 4:
-		txt = "maybeCrossed"
+		txt = "mX" //"maybeCrossed"
 	default:
 		txt = "Undefined!"
 	}
